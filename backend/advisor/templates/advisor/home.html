@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Smart Agriculture Advisor</title>
+</head>
+
+<body>
+
+    <h1>🌾 AI-Based Smart Agriculture Advisor</h1>
+
+    <h2>Farmer Crop Advisor</h2>
+
+    <p>
+        Enter your crop information to get an AI-based recommendation.
+    </p>
+
+    <hr>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <label>Crop:</label>
+        <select name="crop">
+            <option value="tomato">Tomato</option>
+        </select>
+
+        <br><br>
+
+        <label>Soil:</label>
+        <select name="soil">
+            <option value="">I don't know</option>
+            <option value="loamy">Loamy</option>
+            <option value="sandy loam">Sandy Loam</option>
+            <option value="clay">Clay</option>
+        </select>
+
+        <br><br>
+
+        <label>Growth Stage:</label>
+        <select name="stage">
+            <option value="seedling">Seedling</option>
+            <option value="vegetative">Vegetative</option>
+            <option value="flowering">Flowering</option>
+            <option value="fruiting">Fruiting</option>
+            <option value="harvesting">Harvesting</option>
+        </select>
+
+        <br><br>
+
+        <label>Weather:</label>
+        <select name="weather">
+            <option value="normal">Normal</option>
+            <option value="heavy rain">Heavy Rain</option>
+            <option value="hot">Hot</option>
+        </select>
+
+        <br><br>
+
+        <button type="submit">🌱 Get Recommendation</button>
+
+    </form>
+
+    <hr>
+
+    {% if result %}
+
+        <h2>🤖 AI Recommendation</h2>
+
+        {% for item in result.matched_results %}
+
+            {% if item.suitability %}
+                <p>
+                    <strong>Suitability:</strong>
+                    {{ item.suitability }}
+                </p>
+            {% endif %}
+{% if item.growth_stage %}
+    <p>
+        <strong>🌱 Growth Stage:</strong>
+        {{ item.growth_stage }}
+    </p>
+{% endif %}
+            {% if item.recommendation %}
+                <p>
+                    <strong>Recommendation:</strong>
+                    {{ item.recommendation }}
+                </p>
+            {% endif %}
+            {% if item.irrigation %}
+    <p>
+        <strong>💧 Irrigation:</strong>
+        {{ item.irrigation }}
+    </p>
+{% endif %}
+
+            {% if item.alert %}
+                <p>
+                    <strong>⚠️ Alert:</strong>
+                    {{ item.alert }}
+                </p>
+            {% endif %}
+
+        {% empty %}
+
+            <p>No matching rule was found.</p>
+
+        {% endfor %}
+
+        {% if result.reasoning.type == "default" %}
+
+    <h3>ℹ️ Default Reasoning</h3>
+
+    <p>{{ result.reasoning.message }}</p>
+{% if result.reasoning.missing %}
+    <p>
+        <strong>Missing Information:</strong>
+        {{ result.reasoning.missing|join:", " }}
+    </p>
+{% endif %}
+    <p>
+        <strong>Advice:</strong>
+        {{ result.reasoning.recommendation }}
+    </p>
+
+{% endif %}
+
+    {% endif %}
+
+</body>
+</html>
